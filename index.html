@@ -184,6 +184,46 @@
     </script>
 </body>
 </html>
+                noBtn.innerText = "Yes";  // Kaam 'No' ka karega (Next card pe le jayega)
+            } else {
+                yesBtn.innerText = "Yes";
+                noBtn.innerText = "No";
+            }
+
+            // 3. Size Increase (No Overlap Fix)
+            // Hum transform: scale ki jagah padding aur font-size badhayenge taaki layout push ho
+            scaleSize += 0.2;
+            yesBtn.style.padding = (12 * scaleSize) + "px " + (25 * scaleSize) + "px";
+            yesBtn.style.fontSize = (18 * scaleSize) + "px";
+
+            // 4. Force 10 Clicks logic
+            if (clickCount >= 10) {
+                noBtn.style.display = "none";
+                yesBtn.innerText = "Yes"; // Reset to Yes
+                questionText.innerText = "Ab toh option hi nahi bacha! Click YES! 😍";
+                mainEmoji.innerText = "💍";
+            }
+        });
+
+        // Yes Button click (Hamesha success screen pe le jayega, chahe text kuch bhi ho)
+        yesBtn.addEventListener('click', () => {
+            mainCard.classList.add('hidden');
+            successCard.classList.remove('hidden');
+            setInterval(createHeart, 150);
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-pop');
+            heart.innerText = '❤️';
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = "100vh";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
