@@ -13,41 +13,40 @@
             margin: 0;
             background-color: #fff0f3;
             font-family: 'Poppins', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden;
             text-align: center;
         }
 
         .container {
             width: 90%;
             max-width: 500px;
-            z-index: 10;
+            display: flex;
+            flex-direction: column; /* Sab kuch line se niche aayega, overlap nahi hoga */
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .emoji-box {
             font-size: 80px;
             margin-bottom: 20px;
+            transition: all 0.3s;
         }
 
-        #question-area {
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        h1 {
+        #questionText {
             color: #ff4d6d;
             font-size: 1.5rem;
             line-height: 1.4;
+            margin-bottom: 30px;
+            min-height: 80px; /* Text badalne par layout hilega nahi */
         }
 
         .btn-wrapper {
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Buttons ko stack kiya taaki Yes bada ho toh No ko niche dhakele */
             align-items: center;
-            gap: 15px;
-            min-height: 120px;
-            position: relative;
+            gap: 20px;
+            width: 100%;
         }
 
         button {
@@ -57,9 +56,134 @@
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90vw; /* Screen se bahar nahi jayega */
         }
 
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            order: 1; /* Hamesha position control ke liye */
+        }
+
+        #noBtn {
+            background-color: #6c757d;
+            color: white;
+            order: 2;
+        }
+
+        .heart-pop {
+            position: fixed;
+            font-size: 25px;
+            animation: floatUp 3s forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(2); opacity: 0; }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainCard">
+        <div class="emoji-box" id="mainEmoji">🥺</div>
+        <h1 id="questionText">Will you be my Valentine? ❤️</h1>
+        
+        <div class="btn-wrapper">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+    </div>
+
+    <div class="container hidden" id="successCard">
+        <div class="emoji-box">🥰</div>
+        <h1 style="color: #ff4d6d; font-size: 2rem;">Hehe, I knew it!<br>I Love You! ❤️</h1>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionText = document.getElementById('questionText');
+        const mainEmoji = document.getElementById('mainEmoji');
+        const mainCard = document.getElementById('mainCard');
+        const successCard = document.getElementById('successCard');
+
+        const dialogues = [
+            "Will you be my Valentine? ❤️",
+            "Soch lo ek baar aur...",
+            "Maan jao na yaar, itna nakhra kyun? 🥺",
+            "Plzz bestie maan jaao .",
+            "Thukraogi thukralo, hm thokar khakar bhee tumhare dar pe aayenge. ",
+            "Arre! Sach mein No bol rahi ho? 💔", // Index 5 - Yahan swap hoga
+            "Itna gussa achha nahi hota sehat ke liye!",
+            "Ek baar 'Yes' bol ke toh dekho...",
+            "Ab bas karo, ungli thak jayegi tumhari!",
+            "Aakhri baar puch raha hoon, maan jao na? 🙏",
+            "Achha ab No button gayab... ab toh Yes hi bacha hai! 😂"
+        ];
+
+        const emojis = ["🥺", "🤔", "😢", "😭", "😤", "😠", "🫠", "🤡", "🤕", "💀", "😋"];
+
+        let clickCount = 0;
+        let scaleSize = 1;
+
+        noBtn.addEventListener('click', () => {
+            clickCount++;
+
+            // 1. Dialogue & Emoji Update
+            if (clickCount < dialogues.length) {
+                questionText.innerText = dialogues[clickCount];
+                mainEmoji.innerText = emojis[clickCount];
+            }
+
+            // 2. Special Logic: Text Swap at Index 5
+            // Agar "Sach mein No bol rahi ho?" wala sawal hai
+            if (clickCount === 5) {
+                yesBtn.innerText = "No";  // Kaam 'Yes' ka karega (Success pe le jayega)
+                noBtn.innerText = "Yes";  // Kaam 'No' ka karega (Next card pe le jayega)
+            } else {
+                yesBtn.innerText = "Yes";
+                noBtn.innerText = "No";
+            }
+
+            // 3. Size Increase (No Overlap Fix)
+            // Hum transform: scale ki jagah padding aur font-size badhayenge taaki layout push ho
+            scaleSize += 0.2;
+            yesBtn.style.padding = (12 * scaleSize) + "px " + (25 * scaleSize) + "px";
+            yesBtn.style.fontSize = (18 * scaleSize) + "px";
+
+            // 4. Force 10 Clicks logic
+            if (clickCount >= 10) {
+                noBtn.style.display = "none";
+                yesBtn.innerText = "Yes"; // Reset to Yes
+                questionText.innerText = "Ab toh option hi nahi bacha! Click YES! 😍";
+                mainEmoji.innerText = "💍";
+            }
+        });
+
+        // Yes Button click (Hamesha success screen pe le jayega, chahe text kuch bhi ho)
+        yesBtn.addEventListener('click', () => {
+            mainCard.classList.add('hidden');
+            successCard.classList.remove('hidden');
+            setInterval(createHeart, 150);
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-pop');
+            heart.innerText = '❤️';
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = "100vh";
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
