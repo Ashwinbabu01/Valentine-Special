@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maan Jao Na! ❤️</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #fff0f3;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            z-index: 10;
+        }
+
+        .emoji-box {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        #question-area {
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            color: #ff4d6d;
+            font-size: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .btn-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            min-height: 120px;
+            position: relative;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            z-index: 999;
+        }
+
+        #noBtn {
+            background-color: #6c757d;
+            color: white;
+            position: relative;
+        }
+
+        .heart-pop {
+            position: fixed;
+            font-size: 25px;
+            animation: floatUp 3s forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(2); opacity: 0; }
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainCard">
+        <div class="emoji-box" id="mainEmoji">🥺</div>
+        
+        <div id="question-area">
+            <h1 id="questionText">Will you be my Valentine? ❤️</h1>
+        </div>
+        
+        <div class="btn-wrapper">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+    </div>
+
+    <div class="container hidden" id="successCard">
+        <div class="emoji-box">🥰</div>
+        <h1 style="color: #ff4d6d; font-size: 2rem;">Hehe, I knew it!<br>I Love You! ❤️</h1>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const questionText = document.getElementById('questionText');
+        const mainEmoji = document.getElementById('mainEmoji');
+        const mainCard = document.getElementById('mainCard');
+        const successCard = document.getElementById('successCard');
+
+        const dialogues = [
+            "Will you be my Valentine? ❤️",
+            "Soch lo ek baar aur...",
+            "Maan jao na yaar, itna nakhra kyun? 🥺",
+            "Plzz bestie maan jaao .",
+            "Thukraogi thukralo, hm thokar khakar bhee tumhare dar pe aayenge. ",
+            "Arre! Sach mein No bol rahi ho? 💔",
+            "Itna gussa achha nahi hota sehat ke liye!",
+            "Ek baar 'Yes' bol ke toh dekho...",
+            "Ab bas karo, ungli thak jayegi tumhari!",
+            "Aakhri baar puch raha hoon, maan jao na? 🙏",
+            "Achha ab No button gayab... ab toh Yes hi bacha hai! 😂"
+        ];
+
+        const emojis = ["🥺", "🤔", "😢", "😭", "😤", "😠", "🫠", "🤡", "🤕", "💀", "😋"];
+
+        let clickCount = 0;
+        let scaleSize = 1;
+
+        noBtn.addEventListener('click', () => {
+            clickCount++;
+
+            // 1. Dialogue & Emoji update
+            if (clickCount < dialogues.length) {
+                questionText.innerText = dialogues[clickCount];
+                mainEmoji.innerText = emojis[clickCount];
+            }
+
+            // 2. Yes button grows bigger
+            scaleSize += 0.4;
+            yesBtn.style.transform = `scale(${scaleSize})`;
+
+            // 3. Move No button randomly
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            noBtn.style.position = "fixed";
+            noBtn.style.left = x + "px";
+            noBtn.style.top = y + "px";
+
+            // 4. Force 10 Clicks
+            if (clickCount >= 10) {
+                noBtn.style.display = "none";
+                questionText.innerText = "Ab toh option hi nahi bacha! Click YES! 😍";
+                mainEmoji.innerText = "💍";
+            }
+        });
+
+        yesBtn.addEventListener('click', () => {
+            mainCard.classList.add('hidden');
+            successCard.classList.remove('hidden');
+            
+            // Start Heart Rain
+            setInterval(createHeart, 100);
+        });
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-pop');
+            heart.innerText = '❤️';
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = "100vh";
+            heart.style.left = Math.random() * 100 + "vw";
+            document.body.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
